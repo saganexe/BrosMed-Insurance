@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace BrosMed_Insurance.Migrations.ReservationDb
 {
     /// <inheritdoc />
-    public partial class wizyta : Migration
+    public partial class wizyty : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -18,14 +18,14 @@ namespace BrosMed_Insurance.Migrations.ReservationDb
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     godzinaVM = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    GodzinaId = table.Column<int>(type: "int", nullable: true)
+                    NewGodzinaId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Godziny", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Godziny_Godziny_GodzinaId",
-                        column: x => x.GodzinaId,
+                        name: "FK_Godziny_Godziny_NewGodzinaId",
+                        column: x => x.NewGodzinaId,
                         principalTable: "Godziny",
                         principalColumn: "Id");
                 });
@@ -97,9 +97,9 @@ namespace BrosMed_Insurance.Migrations.ReservationDb
                 column: "TerminyId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Godziny_GodzinaId",
+                name: "IX_Godziny_NewGodzinaId",
                 table: "Godziny",
-                column: "GodzinaId");
+                column: "NewGodzinaId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Terminy_godzinaId",

@@ -3,6 +3,7 @@
 *@
 @{
 }
+@model BrosMed_Insurance.Models.Reservation.Godzina
 
 @{
     ViewData["Title"] = "Wybierz Godzinę";
@@ -14,9 +15,9 @@
     <div class="form-group">
         <label for="godzina">Wybierz godzinę:</label>
         <select class="form-control" id="godzina" name="godzina">
-            @foreach (var godzina in Model.Godzina)
+            @foreach (var godzina in Model.Godzinki)
             {
-                <option value="@godzina.Id">@godzina.godzina</option>
+                <option value="@godzina.Id">@godzina.godzinaVM</option>
             }
         </select>
     </div>

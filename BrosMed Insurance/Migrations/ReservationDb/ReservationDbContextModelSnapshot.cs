@@ -52,7 +52,7 @@ namespace BrosMed_Insurance.Migrations.ReservationDb
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int?>("GodzinaId")
+                    b.Property<int?>("NewGodzinaId")
                         .HasColumnType("int");
 
                     b.Property<string>("godzinaVM")
@@ -61,7 +61,7 @@ namespace BrosMed_Insurance.Migrations.ReservationDb
 
                     b.HasKey("Id");
 
-                    b.HasIndex("GodzinaId");
+                    b.HasIndex("NewGodzinaId");
 
                     b.ToTable("Godziny");
                 });
@@ -126,9 +126,11 @@ namespace BrosMed_Insurance.Migrations.ReservationDb
 
             modelBuilder.Entity("BrosMed_Insurance.Models.Reservation.Godzina", b =>
                 {
-                    b.HasOne("BrosMed_Insurance.Models.Reservation.Godzina", null)
+                    b.HasOne("BrosMed_Insurance.Models.Reservation.Godzina", "NewGodzina")
                         .WithMany("Godzinki")
-                        .HasForeignKey("GodzinaId");
+                        .HasForeignKey("NewGodzinaId");
+
+                    b.Navigation("NewGodzina");
                 });
 
             modelBuilder.Entity("BrosMed_Insurance.Models.Reservation.Terminy", b =>

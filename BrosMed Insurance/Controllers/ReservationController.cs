@@ -18,27 +18,27 @@
             public ReservationController(SignInManager<User> signInManager, UserManager<User> userManager, RoleManager<IdentityRole> roleManager,ReservationDbContext context)
             {
                 _context = context;
-            }
+            }        
             [HttpGet]
-            public async Task<IActionResult> AddReservation()
-            {
-            
-                return View();
-            }
-
-            [HttpPost]
             public async Task<IActionResult> AddReservation(Terminy terminyVM)
             {
-                var godziny = _context.Godziny.ToListAsync();
+                var godziny = await _context.Godziny.ToListAsync();
 
             var viewModel = new Godzina
             {
-                
+                Godzinki = godziny,
+                NewGodzina = new Godzina()
+
             };
                 
-                return View(godziny);
+                return View(viewModel);
+             }
+        [HttpPost]
+        public async Task<IActionResult> AddReservation()
+        {
+
+            return View();
         }
-        
-       
-        }
+
+    }
     }
