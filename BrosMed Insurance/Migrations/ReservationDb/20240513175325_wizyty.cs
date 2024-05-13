@@ -15,19 +15,13 @@ namespace BrosMed_Insurance.Migrations.ReservationDb
                 name: "Godziny",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
+                    GodzinaId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    godzinaVM = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    NewGodzinaId = table.Column<int>(type: "int", nullable: true)
+                    godzinaVM = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Godziny", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Godziny_Godziny_NewGodzinaId",
-                        column: x => x.NewGodzinaId,
-                        principalTable: "Godziny",
-                        principalColumn: "Id");
+                    table.PrimaryKey("PK_Godziny", x => x.GodzinaId);
                 });
 
             migrationBuilder.CreateTable(
@@ -50,18 +44,18 @@ namespace BrosMed_Insurance.Migrations.ReservationDb
                 {
                     TerminyId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Data = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Data = table.Column<DateOnly>(type: "date", nullable: false),
                     UslugaId = table.Column<int>(type: "int", nullable: false),
-                    godzinaId = table.Column<int>(type: "int", nullable: false)
+                    GodzinaId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Terminy", x => x.TerminyId);
                     table.ForeignKey(
-                        name: "FK_Terminy_Godziny_godzinaId",
-                        column: x => x.godzinaId,
+                        name: "FK_Terminy_Godziny_GodzinaId",
+                        column: x => x.GodzinaId,
                         principalTable: "Godziny",
-                        principalColumn: "Id",
+                        principalColumn: "GodzinaId",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_Terminy_Usluga_UslugaId",
@@ -97,14 +91,9 @@ namespace BrosMed_Insurance.Migrations.ReservationDb
                 column: "TerminyId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Godziny_NewGodzinaId",
-                table: "Godziny",
-                column: "NewGodzinaId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Terminy_godzinaId",
+                name: "IX_Terminy_GodzinaId",
                 table: "Terminy",
-                column: "godzinaId");
+                column: "GodzinaId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Terminy_UslugaId",

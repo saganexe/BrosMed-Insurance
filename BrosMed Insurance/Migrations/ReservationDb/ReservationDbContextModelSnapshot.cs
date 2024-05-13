@@ -46,22 +46,17 @@ namespace BrosMed_Insurance.Migrations.ReservationDb
 
             modelBuilder.Entity("BrosMed_Insurance.Models.Reservation.Godzina", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<int>("GodzinaId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int?>("NewGodzinaId")
-                        .HasColumnType("int");
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("GodzinaId"));
 
                     b.Property<string>("godzinaVM")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("Id");
-
-                    b.HasIndex("NewGodzinaId");
+                    b.HasKey("GodzinaId");
 
                     b.ToTable("Godziny");
                 });
@@ -74,20 +69,20 @@ namespace BrosMed_Insurance.Migrations.ReservationDb
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("TerminyId"));
 
-                    b.Property<DateTime>("Data")
-                        .HasColumnType("datetime2");
+                    b.Property<DateOnly>("Data")
+                        .HasColumnType("date");
+
+                    b.Property<int>("GodzinaId")
+                        .HasColumnType("int");
 
                     b.Property<int>("UslugaId")
                         .HasColumnType("int");
 
-                    b.Property<int>("godzinaId")
-                        .HasColumnType("int");
-
                     b.HasKey("TerminyId");
 
-                    b.HasIndex("UslugaId");
+                    b.HasIndex("GodzinaId");
 
-                    b.HasIndex("godzinaId");
+                    b.HasIndex("UslugaId");
 
                     b.ToTable("Terminy");
                 });
@@ -124,37 +119,23 @@ namespace BrosMed_Insurance.Migrations.ReservationDb
                     b.Navigation("Terminy");
                 });
 
-            modelBuilder.Entity("BrosMed_Insurance.Models.Reservation.Godzina", b =>
-                {
-                    b.HasOne("BrosMed_Insurance.Models.Reservation.Godzina", "NewGodzina")
-                        .WithMany("Godzinki")
-                        .HasForeignKey("NewGodzinaId");
-
-                    b.Navigation("NewGodzina");
-                });
-
             modelBuilder.Entity("BrosMed_Insurance.Models.Reservation.Terminy", b =>
                 {
+                    b.HasOne("BrosMed_Insurance.Models.Reservation.Godzina", "Godzina")
+                        .WithMany()
+                        .HasForeignKey("GodzinaId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("BrosMed_Insurance.Models.Reservation.Usluga", "Usluga")
                         .WithMany()
                         .HasForeignKey("UslugaId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("BrosMed_Insurance.Models.Reservation.Godzina", "godzina")
-                        .WithMany()
-                        .HasForeignKey("godzinaId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.Navigation("Godzina");
 
                     b.Navigation("Usluga");
-
-                    b.Navigation("godzina");
-                });
-
-            modelBuilder.Entity("BrosMed_Insurance.Models.Reservation.Godzina", b =>
-                {
-                    b.Navigation("Godzinki");
                 });
 #pragma warning restore 612, 618
         }

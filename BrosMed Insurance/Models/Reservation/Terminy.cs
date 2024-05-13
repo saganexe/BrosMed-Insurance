@@ -9,7 +9,7 @@ namespace BrosMed_Insurance.Models.Reservation
         public int TerminyId { get; set; }
 
         [Required]
-        public DateTime Data { get; set; }
+        public DateOnly Data { get; set; }
 
         [Required]
         public int UslugaId { get; set; }
@@ -17,7 +17,9 @@ namespace BrosMed_Insurance.Models.Reservation
         public virtual Usluga Usluga { get; set; }
 
         [Required]
-        public Godzina godzina { get; set; }
+        public int GodzinaId { get; set; }
+        [ForeignKey("GodzinaId")]
+        public virtual Godzina Godzina { get; set; }
 
     }
 }

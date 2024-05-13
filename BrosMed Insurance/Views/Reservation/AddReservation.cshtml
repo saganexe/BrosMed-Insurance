@@ -1,25 +1,58 @@
-﻿@*
+﻿@using BrosMed_Insurance.Models.Reservation
+@*
     For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 *@
 @{
 }
-@model BrosMed_Insurance.Models.Reservation.Godzina
+@model BrosMed_Insurance.Models.Reservation.ReservationViewModel
 
 @{
     ViewData["Title"] = "Wybierz Godzinę";
+    var godzinkiList = ViewBag.GodzinkiList as List<Godzina>;
+    var uslugiList = ViewBag.UslugiList as List<Usluga>;
 }
 
 <h1>Wybierz Godzinę</h1>
 
-<form asp-controller="YourController" asp-action="YourAction" method="post">
+<form asp-controller="Reservation" asp-action="AddReservation" method="post">
+    <div class="form-group">
+        <label for="data">Wybierz datę:</label>
+        <input asp-for="Data" type="date" class="form-control" id="data" name="Data" value="@DateTime.Today.AddDays(1).ToString("yyyy-MM-dd")" min="@DateTime.Today.AddDays(1).ToString("yyyy-MM-dd")" max="@DateTime.Today.AddDays(45).ToString("yyyy-MM-dd")">
+        <span asp-validation-for="Data" class="text-danger"></span>
+    </div>
     <div class="form-group">
         <label for="godzina">Wybierz godzinę:</label>
-        <select class="form-control" id="godzina" name="godzina">
-            @foreach (var godzina in Model.Godzinki)
+        <select class="form-control" id="godzina" name="SelectedGodzinaId" asp-for="SelectedGodzinaId">
+            @foreach (var godzina in godzinkiList)
             {
-                <option value="@godzina.Id">@godzina.godzinaVM</option>
+                <option value="@godzina.GodzinaId">@godzina.godzinaVM</option>
+            }
+        </select>
+    </div>
+    <div class="form-group">
+        <label for="usluga">Wybierz usługę:</label>
+        <select class="form-control" id="usluga" name="SelectedUslugaId" asp-for="SelectedUslugaId">
+            @foreach (var usluga in uslugiList)
+            {
+                <option value="@usluga.UslugaId">@usluga.Nazwa, @usluga.Cena</option>
             }
         </select>
     </div>
     <button type="submit" class="btn btn-primary">Wybierz</button>
 </form>
+
+@section Scripts {
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('#data').datepicker({
+                format: 'yyyy-mm-dd',
+                autoclose: true,
+                todayHighlight: true,
+                startDate: '+1d', // Minimalna data: jutro
+                endDate: '+45d' // Maksymalna data: 45 dni (1,5 miesiąca) od jutra
+            });
+        });
+    </script>
+}
