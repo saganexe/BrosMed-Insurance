@@ -1,12 +1,17 @@
 ﻿using System;
+using BrosMed_Insurance.Models;
+using Microsoft.AspNetCore.Identity;
+using System.Collections.Generic;
+using System.Net;
 using Microsoft.EntityFrameworkCore.Migrations;
+using BCrypt;
 
 #nullable disable
 
 namespace BrosMed_Insurance.Migrations
 {
     /// <inheritdoc />
-    public partial class User : Migration
+    public partial class user : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -196,14 +201,16 @@ namespace BrosMed_Insurance.Migrations
                 name: "UserNameIndex",
                 table: "AspNetUsers",
                 column: "NormalizedUserName",
-                unique: true,
-                filter: "[NormalizedUserName] IS NOT NULL");
-
-            migrationBuilder.Sql("INSERT INTO AspNetRoles (Id, Name, NormalizedName) values (NEWID(), 'Admin', 'Admin')");
-            migrationBuilder.Sql("INSERT INTO AspNetRoles (Id, Name, NormalizedName) values (NEWID(), 'Member', 'Member')");
-            migrationBuilder.Sql("INSERT INTO AspNetRoles (Id, Name, NormalizedName) values (NEWID(), 'Employee', 'Employee')");
+            unique: true,
+            filter: "[NormalizedUserName] IS NOT NULL");
 
             
+
+            migrationBuilder.Sql("INSERT INTO AspNetRoles (Id, Name, NormalizedName) values (1, 'Admin', 'Admin')");
+            migrationBuilder.Sql("INSERT INTO AspNetRoles (Id, Name, NormalizedName) values (2, 'Employee', 'Employee')");
+            migrationBuilder.Sql("INSERT INTO AspNetRoles (Id, Name, NormalizedName) values (3, 'Member', 'Member')");
+           
+
             
         }
 
@@ -211,13 +218,11 @@ namespace BrosMed_Insurance.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "AspNetRoleClaims");
-
+            name: "AspNetRoleClaims");
             migrationBuilder.DropTable(
-                name: "AspNetUserClaims");
-
+            name: "AspNetUserClaims");
             migrationBuilder.DropTable(
-                name: "AspNetUserLogins");
+            name: "AspNetUserLogins");
 
             migrationBuilder.DropTable(
                 name: "AspNetUserRoles");

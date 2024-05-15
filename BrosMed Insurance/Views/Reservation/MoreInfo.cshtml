@@ -1,0 +1,57 @@
+﻿
+@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+@model BrosMed_Insurance.Models.User
+@{
+    ViewData["Title"] = "Klient";    
+}
+<h1>Informacje o kliencie</h1>
+
+@if (Model is null)
+{
+    <p>Użytkownik nie istnieje</p>
+}else{
+    <div class="form-group">
+        <table class="form-control">
+            <thead>
+                <tr>
+                    <th>Imie</th>
+                    <th>Nazwisko</th>
+                    <th>Numer telefonu</th>
+                    <th>Adres</th>
+                    <th>Pesel</th>
+                    <th>email</th>
+                </tr>
+            </thead>
+
+            <tr>
+                <td>
+                    @Model.name
+                </td>
+                <td>
+                    @Model.surname
+                </td>
+                <td>
+                    @Model.PhoneNumber
+                </td>
+
+                <td>
+                    @Model.address
+                </td>
+                <td>
+                    @Model.pesel
+                </td>
+                <td>
+                    @Model.Email
+                </td>
+                <td>
+                <a class="btn btn-primary" asp-controller="Reservation" asp-action="MoreInfo">Edytuj</a>
+                </td>
+            </tr>
+
+        </table>
+    </div>
+    }

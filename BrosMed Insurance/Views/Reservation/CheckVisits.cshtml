@@ -13,12 +13,11 @@
 }
 <h1>Wizyty</h1>
 
-<form asp-controller="Reservation" asp-action="CheckVisits" method="post">
+
     <div class="form-group">
         <table class="form-control">
             <thead>
-                <tr>
-                    <th>Id</th>                  
+                <tr>                               
                     <th>Imie</th>
                     <th>Nazwisko</th>                   
                     <th>Numer telefonu</th>                   
@@ -31,8 +30,7 @@
             {
                 var user = await userManager.FindByIdAsync(visit.UserId);
                 
-                <tr>
-                    <td>@visit.FinalizacjaId</td>
+                <tr>                   
                     <td>                       
                         @user.name
                     </td>
@@ -52,8 +50,11 @@
                     <td>
                         @visit.Terminy.Usluga.Cena
                     </td>
+                    <td>
+                    <a class="btn btn-primary" asp-controller="Reservation" asp-action="MoreInfo" asp-route-userId="@visit.UserId">Więcej o kliencie</a>
+                    </td>
                 </tr>
             }
         </table>
     </div>
-</form>
+

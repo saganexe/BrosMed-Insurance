@@ -51,7 +51,9 @@ namespace BrosMed_Insurance.Controllers
 
                 if (result.Succeeded)
                 {
-                    await userManager.AddToRoleAsync(user, "Admin");
+                   // await userManager.AddToRoleAsync(user, "Admin");
+                   // await userManager.AddToRoleAsync(user, "Employee");
+                    await userManager.AddToRoleAsync(user, "Member");
                     await signInManager.SignInAsync(user, false);
 
                     return RedirectToAction("Index", "Home");
@@ -76,6 +78,7 @@ namespace BrosMed_Insurance.Controllers
             if (ModelState.IsValid)
             {
                 var user = await userManager.FindByEmailAsync(viewModel.email);
+                
                 if (user != null && BCrypt.Net.BCrypt.Verify(viewModel.password, user.PasswordHash))
                 {
                     await signInManager.SignInAsync(user, viewModel.rememberMe);
@@ -129,6 +132,7 @@ namespace BrosMed_Insurance.Controllers
 
             return View(users);
         }
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         public async Task<IActionResult> EditUsers(User viewModel, string role)
         {
@@ -162,6 +166,7 @@ namespace BrosMed_Insurance.Controllers
             return RedirectToAction("ListUsers", "User");
 
         }
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         public async Task<IActionResult> DeleteUsers(User viewModel)
         {

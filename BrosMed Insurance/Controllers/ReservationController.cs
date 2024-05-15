@@ -1,5 +1,5 @@
 ﻿    using BrosMed_Insurance.Data;
-    using BrosMed_Insurance.Models;
+using BrosMed_Insurance.Models;
     using BrosMed_Insurance.Models.Reservation;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -86,12 +86,15 @@ namespace BrosMed_Insurance.Controllers
             return View();
         }
         [Authorize(Roles = "Admin, Employee")]
-        [HttpPost]
-        public async Task<IActionResult> CheckVisits(ReservationViewModel viewModel)
+        [HttpGet]
+        public async Task<IActionResult> MoreInfo(string userId)
         {
-            
-            return View();
+            Console.WriteLine(userId);
+            var user = await _userManager.FindByIdAsync(userId);
+            return View(user);
         }
+
+
 
     }
     }

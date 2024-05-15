@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BrosMed_Insurance.Migrations.ReservationDb
 {
     [DbContext(typeof(ReservationDbContext))]
-    [Migration("20240514195936_wizyty")]
+    [Migration("20240515013046_wizyty")]
     partial class wizyty
     {
         /// <inheritdoc />

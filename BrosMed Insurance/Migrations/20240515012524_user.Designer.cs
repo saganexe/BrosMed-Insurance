@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BrosMed_Insurance.Migrations
 {
     [DbContext(typeof(UserDbContext))]
-    [Migration("20240506131341_User")]
-    partial class User
+    [Migration("20240515012524_user")]
+    partial class user
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
