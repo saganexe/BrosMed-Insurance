@@ -1,44 +1,37 @@
 ﻿    using BrosMed_Insurance.Data;
     using BrosMed_Insurance.Models;
     using BrosMed_Insurance.Models.Reservation;
-    using Microsoft.AspNetCore.Identity;
-    using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
     using Microsoft.EntityFrameworkCore;
     using System.Reflection.Metadata.Ecma335;
+using System.Security.Claims;
 
 namespace BrosMed_Insurance.Controllers
 {
     public class ReservationController : Controller
     {
         private readonly ReservationDbContext _context;
-        private readonly SignInManager<User> signInManager;
-        private readonly UserManager<User> userManager;
-        private readonly RoleManager<IdentityRole> roleManager;
+        private readonly UserManager<User> _userManager;
 
         public ReservationController(SignInManager<User> signInManager, UserManager<User> userManager, RoleManager<IdentityRole> roleManager, ReservationDbContext context)
         {
             _context = context;
+            _userManager = userManager;
         }
+
         [HttpGet]
         public async Task<IActionResult> AddReservation()
         {
             ViewBag.GodzinkiList = await _context.Godziny.ToListAsync();
-            ViewBag.UslugiList = await _context.Usluga.ToListAsync();
-
-
-            
-
+            ViewBag.UslugiList = await _context.Usluga.ToListAsync();        
             return View();
         }
         [HttpPost]
         public async Task<IActionResult> AddReservation(ReservationViewModel viewModel)
         {
-            Console.WriteLine($"Data: {viewModel.Data}");
-            Console.WriteLine($"SelectedGodzinaId: {viewModel.SelectedGodzinaId}");
-            Console.WriteLine($"SelectedUslugaId: {viewModel.SelectedUslugaId}");
-
-
-
+           
             var godziny = await _context.Godziny.ToListAsync();
        
             var uslugi = await _context.Usluga.ToListAsync();
@@ -47,43 +40,59 @@ namespace BrosMed_Insurance.Controllers
 
             if (ModelState.IsValid)
             {
-
-                // Tworzenie nowego obiektu Terminy na podstawie danych przesłanych z formularza
-                var terminy = new Terminy
+                if (HttpContext.User.Identity.IsAuthenticated)
                 {
-                    Data = viewModel.Data,
-                    GodzinaId = viewModel.SelectedGodzinaId,
-                    UslugaId = viewModel.SelectedUslugaId,
-
-                };
-
-                // Dodanie nowego obiektu Terminy do kontekstu bazy danych
-                _context.Terminy.Add(terminy);
-                await _context.SaveChangesAsync();
-
-                // Przekierowanie użytkownika np. do strony potwierdzenia rezerwacji
-                return RedirectToAction("Confirmed");
-            }
-            else
-            {
-                Console.WriteLine("ModelState is not valid:");
-                foreach (var key in ModelState.Keys)
-                {
-                    var state = ModelState[key];
-                    if (state.Errors.Any())
+                    var terminy = new Terminy
                     {
-                        Console.WriteLine($"Field: {key}");
-                        foreach (var error in state.Errors)
-                        {
-                            Console.WriteLine($"- Error: {error.ErrorMessage}");
-                        }
-                    }
-                }
+                        Data = viewModel.Data,
+                        GodzinaId = viewModel.SelectedGodzinaId,
+                        UslugaId = viewModel.SelectedUslugaId,
 
-                // Jeśli model nie jest poprawny, zwracamy widok z błędami walidacji
+                    };
+
+                    _context.Terminy.Add(terminy);
+                    await _context.SaveChangesAsync();
+
+                    var finalizacja = new Finalizacja
+                    {
+                        UserId = HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value,
+                        TerminyId = terminy.TerminyId
+                    };
+
+                _context.Finalizacja.Add(finalizacja);
+                    await _context.SaveChangesAsync();
+
+                    return RedirectToAction("Confirmed");
+                }
+            }
+            
                 return View("AddReservation", viewModel);
             }
 
+        [Authorize(Roles = "Admin, Employee")]
+        [HttpGet]
+        public async Task<IActionResult> CheckVisits()
+        {
+            ViewBag.UserManager = _userManager;
+            ViewBag.AllVisits = await _context.Finalizacja.ToListAsync();
+            ViewBag.Hours = await _context.Finalizacja
+                                    .Include(f => f.Terminy)
+                                        .ThenInclude(t => t.Godzina)
+                                    .ToListAsync();
+            ViewBag.Serrvices = await _context.Finalizacja
+                                    .Include(f => f.Terminy)
+                                        .ThenInclude(t => t.Usluga)
+                                    .ToListAsync();
+            return View();
         }
+        [Authorize(Roles = "Admin, Employee")]
+        [HttpPost]
+        public async Task<IActionResult> CheckVisits(ReservationViewModel viewModel)
+        {
+            
+            return View();
+        }
+
     }
-}
+    }
+
