@@ -1,4 +1,5 @@
-﻿
+﻿@using BrosMed_Insurance.Models.Reservation
+
 @*
     For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 *@
@@ -6,7 +7,8 @@
 }
 @model BrosMed_Insurance.Models.User
 @{
-    ViewData["Title"] = "Klient";    
+    ViewData["Title"] = "Klient"; 
+    var allVisits = ViewBag.AllVisits as List<UserVisitHistory>;
 }
 <h1>Informacje o kliencie</h1>
 
@@ -26,7 +28,7 @@
                     <th>email</th>
                 </tr>
             </thead>
-
+            <tbody>
             <tr>
                 <td>
                     @Model.name
@@ -47,11 +49,33 @@
                 <td>
                     @Model.Email
                 </td>
+            </tr>
+            </tbody>
+        </table>
+        <h2>Historia wizyt</h2>
+        <table>
+            <tbody>
+        @foreach (var visit in allVisits)
+        {
+            <tr>
                 <td>
-                <a class="btn btn-primary" asp-controller="Reservation" asp-action="MoreInfo">Edytuj</a>
+                    @visit.Terminy.Data
+                </td>
+                <td>
+                    @visit.Terminy.Godzina.godzinaVM
+                </td>
+                <td>
+                    @visit.Terminy.Usluga.Nazwa
+                </td>
+                <td>
+                    @visit.Terminy.Usluga.Cena
+                </td>
+                <td>
+                            <a class="btn btn-primary" asp-controller="Reservation" asp-action="MoreInfo" asp-route-userId="@visit.UserId">Więcej o kliencie</a>
                 </td>
             </tr>
-
+        }
+            </tbody>
         </table>
     </div>
     }

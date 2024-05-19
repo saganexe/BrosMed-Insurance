@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BrosMed_Insurance.Migrations.ReservationDb
 {
     [DbContext(typeof(ReservationDbContext))]
-    [Migration("20240515013046_wizyty")]
+    [Migration("20240518150226_wizyty")]
     partial class wizyty
     {
         /// <inheritdoc />
@@ -90,6 +90,28 @@ namespace BrosMed_Insurance.Migrations.ReservationDb
                     b.ToTable("Terminy");
                 });
 
+            modelBuilder.Entity("BrosMed_Insurance.Models.Reservation.UserVisitHistory", b =>
+                {
+                    b.Property<int>("UserVisitHistoryId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("UserVisitHistoryId"));
+
+                    b.Property<int>("TerminyId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("UserVisitHistoryId");
+
+                    b.HasIndex("TerminyId");
+
+                    b.ToTable("UserVisitHistory");
+                });
+
             modelBuilder.Entity("BrosMed_Insurance.Models.Reservation.Usluga", b =>
                 {
                     b.Property<int>("UslugaId")
@@ -139,6 +161,17 @@ namespace BrosMed_Insurance.Migrations.ReservationDb
                     b.Navigation("Godzina");
 
                     b.Navigation("Usluga");
+                });
+
+            modelBuilder.Entity("BrosMed_Insurance.Models.Reservation.UserVisitHistory", b =>
+                {
+                    b.HasOne("BrosMed_Insurance.Models.Reservation.Terminy", "Terminy")
+                        .WithMany()
+                        .HasForeignKey("TerminyId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Terminy");
                 });
 #pragma warning restore 612, 618
         }

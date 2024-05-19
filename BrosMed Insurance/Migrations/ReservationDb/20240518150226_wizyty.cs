@@ -85,6 +85,26 @@ namespace BrosMed_Insurance.Migrations.ReservationDb
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "UserVisitHistory",
+                columns: table => new
+                {
+                    UserVisitHistoryId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    UserId = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    TerminyId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_UserVisitHistory", x => x.UserVisitHistoryId);
+                    table.ForeignKey(
+                        name: "FK_UserVisitHistory_Terminy_TerminyId",
+                        column: x => x.TerminyId,
+                        principalTable: "Terminy",
+                        principalColumn: "TerminyId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_Finalizacja_TerminyId",
                 table: "Finalizacja",
@@ -99,6 +119,11 @@ namespace BrosMed_Insurance.Migrations.ReservationDb
                 name: "IX_Terminy_UslugaId",
                 table: "Terminy",
                 column: "UslugaId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserVisitHistory_TerminyId",
+                table: "UserVisitHistory",
+                column: "TerminyId");
 
             migrationBuilder.Sql("INSERT INTO Godziny (godzinaVM) values ('8.30')");
             migrationBuilder.Sql("INSERT INTO Godziny (godzinaVM) values ('10.00')");
@@ -117,6 +142,9 @@ namespace BrosMed_Insurance.Migrations.ReservationDb
         {
             migrationBuilder.DropTable(
                 name: "Finalizacja");
+
+            migrationBuilder.DropTable(
+                name: "UserVisitHistory");
 
             migrationBuilder.DropTable(
                 name: "Terminy");

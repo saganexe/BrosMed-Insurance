@@ -25,18 +25,18 @@ namespace BrosMed_Insurance.Controllers
         public async Task<IActionResult> AddReservation()
         {
             ViewBag.GodzinkiList = await _context.Godziny.ToListAsync();
-            ViewBag.UslugiList = await _context.Usluga.ToListAsync();        
+            ViewBag.UslugiList = await _context.Usluga.ToListAsync();
             return View();
         }
         [HttpPost]
         public async Task<IActionResult> AddReservation(ReservationViewModel viewModel)
         {
-           
+
             var godziny = await _context.Godziny.ToListAsync();
-       
+
             var uslugi = await _context.Usluga.ToListAsync();
 
-            
+
 
             if (ModelState.IsValid)
             {
@@ -53,28 +53,48 @@ namespace BrosMed_Insurance.Controllers
                     _context.Terminy.Add(terminy);
                     await _context.SaveChangesAsync();
 
+                    var userVisitHistory = new UserVisitHistory
+                    {
+                        UserId = HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value,
+                        TerminyId = terminy.TerminyId
+                    };
+
+                    _context.UserVisitHistory.Add(userVisitHistory);
+                    await _context.SaveChangesAsync();
+
                     var finalizacja = new Finalizacja
                     {
                         UserId = HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value,
                         TerminyId = terminy.TerminyId
                     };
 
-                _context.Finalizacja.Add(finalizacja);
+                    _context.Finalizacja.Add(finalizacja);
                     await _context.SaveChangesAsync();
 
                     return RedirectToAction("Confirmed");
                 }
             }
-            
-                return View("AddReservation", viewModel);
-            }
+
+            return View("AddReservation", viewModel);
+        }
 
         [Authorize(Roles = "Admin, Employee")]
         [HttpGet]
         public async Task<IActionResult> CheckVisits()
         {
             ViewBag.UserManager = _userManager;
-            ViewBag.AllVisits = await _context.Finalizacja.ToListAsync();
+            //ViewBag.AllVisits = await _context.Finalizacja.ToListAsync();
+            var allVisits = await _context.Finalizacja
+                                  .Include(f => f.Terminy)
+                                      .ThenInclude(t => t.Godzina)
+                                  .Include(f => f.Terminy)
+                                      .ThenInclude(t => t.Usluga)
+                                  .ToListAsync();
+            allVisits = allVisits
+                                  .OrderBy(visit => visit.Terminy?.Data ?? DateOnly.MinValue)
+                                        .ThenBy(visit => visit.Terminy?.Godzina?.GodzinaId ?? int.MinValue)
+                                  .ToList();
+            ViewBag.AllVisits = allVisits;
             ViewBag.Hours = await _context.Finalizacja
                                     .Include(f => f.Terminy)
                                         .ThenInclude(t => t.Godzina)
@@ -89,13 +109,24 @@ namespace BrosMed_Insurance.Controllers
         [HttpGet]
         public async Task<IActionResult> MoreInfo(string userId)
         {
-            Console.WriteLine(userId);
+            var allVisits = await _context.UserVisitHistory
+                                  .Include(f => f.Terminy)
+                                      .ThenInclude(t => t.Godzina)
+                                  .Include(f => f.Terminy)
+                                      .ThenInclude(t => t.Usluga)
+                                  .Where(f => f.UserId == userId)
+                                  .ToListAsync();
+
+            allVisits = allVisits
+                                  .OrderBy(visit => visit.Terminy?.Data ?? DateOnly.MinValue)
+                                        .ThenBy(visit => visit.Terminy?.Godzina?.GodzinaId ?? int.MinValue)
+                                  .ToList();
+            ViewBag.AllVisits = allVisits;
+
+
             var user = await _userManager.FindByIdAsync(userId);
             return View(user);
-        }
-
-
-
+        }    
     }
     }
 

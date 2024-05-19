@@ -17,7 +17,8 @@
     <div class="form-group">
         <table class="form-control">
             <thead>
-                <tr>                               
+                <tr>  
+                    <th>Data</th>
                     <th>Imie</th>
                     <th>Nazwisko</th>                   
                     <th>Numer telefonu</th>                   
@@ -30,7 +31,8 @@
             {
                 var user = await userManager.FindByIdAsync(visit.UserId);
                 
-                <tr>                   
+                <tr> 
+                    <td>@visit.Terminy.Data</td>
                     <td>                       
                         @user.name
                     </td>

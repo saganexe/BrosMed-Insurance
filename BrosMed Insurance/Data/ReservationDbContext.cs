@@ -12,6 +12,7 @@ namespace BrosMed_Insurance.Data
         public DbSet<Usluga> Usluga { get; set; }
         public DbSet<Terminy> Terminy { get; set; }
         public DbSet<Finalizacja> Finalizacja { get; set; }
+        public DbSet<UserVisitHistory> UserVisitHistory { get; set; }
         public DbSet<Godzina> Godziny { get; set;}
         
     }
