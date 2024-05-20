@@ -90,11 +90,35 @@ namespace BrosMed_Insurance.Controllers
                                   .Include(f => f.Terminy)
                                       .ThenInclude(t => t.Usluga)
                                   .ToListAsync();
+
+            var currentDate = DateOnly.FromDateTime(DateTime.Now);
+            var expiredVisits = allVisits
+                                  .Where(visit => visit.Terminy == null || visit.Terminy.Data < currentDate)
+                                  .ToList();
+
+            if (expiredVisits.Any())
+            {
+                _context.Finalizacja.RemoveRange(expiredVisits);
+                await _context.SaveChangesAsync();
+            }
+
+            allVisits = await _context.Finalizacja
+                                  .Include(f => f.Terminy)
+                                      .ThenInclude(t => t.Godzina)
+                                  .Include(f => f.Terminy)
+                                      .ThenInclude(t => t.Usluga)
+                                  .ToListAsync();
+
             allVisits = allVisits
                                   .OrderBy(visit => visit.Terminy?.Data ?? DateOnly.MinValue)
                                         .ThenBy(visit => visit.Terminy?.Godzina?.GodzinaId ?? int.MinValue)
                                   .ToList();
-            ViewBag.AllVisits = allVisits;
+
+            var filteredVisits = allVisits
+                         .Where(visit => visit.Terminy != null && visit.Terminy.Data >= currentDate)
+                         .ToList();
+
+            ViewBag.AllVisits = filteredVisits;
             ViewBag.Hours = await _context.Finalizacja
                                     .Include(f => f.Terminy)
                                         .ThenInclude(t => t.Godzina)
